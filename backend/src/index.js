@@ -25,7 +25,7 @@ connectCloudinary()  // for image storage
 app.use('/stripe', express.raw({type: 'application/json'}), stripeWebhooks) // verified stripe payments
 
 app.use(cors({
-    origin: ['http://localhost:5173', 'https://my-store-frontend-gold.vercel.app'],  //whitelist of all allowed domains
+    origin: ['http://localhost:5173', 'https://my-store-frontend-henna.vercel.app'],  //whitelist of all allowed domains
     credentials: true, // Required for cookies/authorization header
 }))
 // Root end point to check api status
