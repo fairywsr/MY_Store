@@ -1,0 +1,74 @@
+import React, { useContext } from 'react'
+import toast from 'react-hot-toast'
+import { ShopContext } from '../../context/ShopContext'
+
+function List() {
+  const { products, currency, fetchProducts, axios } = useContext(ShopContext)
+
+  const toogleStock = async(productId, inStock)=>{
+    try {
+      const {data} = await axios.post("/api/product/stock", {productId, inStock})
+      if(data.success){
+        fetchProducts()
+        toast.success(data.message)
+      }else{
+        toast.error(data.message)
+      }
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
+
+  return (
+    <div className="px-2 sm:px-6 py-12 m-2 h-[97vh] bg-primary overflow-y-scroll lg:w-4/5 rounded-xl">
+      <div className="flex flex-col gap-2">
+        
+        {/* Table header */}
+        <div className="grid grid-cols-[1fr_3.5fr_1fr_1fr_1fr] items-center py-1 px-2 bg-white bold-14 sm:bold-15 mb-1 rounded">
+          <h5>Image</h5>
+          <h5>Name</h5>
+          <h5>Category</h5>
+          <h5>Price</h5>
+          <h5>In Stock</h5>
+        </div>
+
+        {/* Products */}
+        {products.map((product) => (
+          <div key={product._id} className="grid grid-cols-[1fr_3.5fr_1fr_1fr_1fr] items-center gap-2 p-2 bg-white rounded-lg">
+            
+            {/* Product Image */}
+            <img 
+              src={product.image?.[0] || "/placeholder.png"} 
+              alt="product" 
+              className="w-12 h-12 object-cover rounded bg-primary"
+            />
+
+            {/* Product Name */}
+            <h5 className="text-sm font-semibold">{product.name}</h5>
+
+            {/* Product Category */}
+            <p className="text-sm font-semibold">{product.category}</p>
+
+            {/* Product Price */}
+            <div className="text-sm font-semibold">{currency}{product.offerPrice}</div>
+
+            {/* Stock toggle */}
+            <div>
+              <label className="relative inline-flex items-center cursor-pointer gap-3">
+                <input 
+                  type="checkbox" onClick={()=>toogleStock(product._id, !product.inStock)}
+                  className="sr-only peer" 
+                  defaultChecked={product.inStock} 
+                />
+                <div className="w-10 h-6 bg-slate-300 rounded-full peer-checked:bg-secondary transition-colors duration-200"></div>
+                <span className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-in-out peer-checked:translate-x-4"></span>
+              </label>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export default List
